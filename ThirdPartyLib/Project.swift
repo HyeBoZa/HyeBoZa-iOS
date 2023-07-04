@@ -11,7 +11,7 @@ let project = Project.dynamicFramework(
         .SnapKit,
         .Kingfisher
     ],
-    deploymentTarget: .iOS(targetVersion: "14.0", devices: [.iphone]),
+    deploymentTarget: .iOS(targetVersion: "14.0", devices: .iphone),
     dependencies: [
         .SPM.RxSwift,
         .SPM.Realm,

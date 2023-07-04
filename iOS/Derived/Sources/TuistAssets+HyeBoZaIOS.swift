@@ -18,8 +18,10 @@
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum HyeBoZaIOSAsset {
   public static let accentColor = HyeBoZaIOSColors(name: "AccentColor")
+  public static let logoSmall = HyeBoZaIOSImages(name: "LOGO_SMALL")
   public static let main = HyeBoZaIOSColors(name: "Main")
   public static let main2 = HyeBoZaIOSColors(name: "Main2")
+  public static let panda = HyeBoZaIOSImages(name: "PANDA")
   public static let sub = HyeBoZaIOSColors(name: "Sub")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
@@ -56,6 +58,46 @@ public extension HyeBoZaIOSColors.Color {
     self.init(named: asset.name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
     self.init(named: NSColor.Name(asset.name), bundle: bundle)
+    #elseif os(watchOS)
+    self.init(named: asset.name)
+    #endif
+  }
+}
+
+public struct HyeBoZaIOSImages {
+  public fileprivate(set) var name: String
+
+  #if os(macOS)
+  public typealias Image = NSImage
+  #elseif os(iOS) || os(tvOS) || os(watchOS)
+  public typealias Image = UIImage
+  #endif
+
+  public var image: Image {
+    let bundle = HyeBoZaIOSResources.bundle
+    #if os(iOS) || os(tvOS)
+    let image = Image(named: name, in: bundle, compatibleWith: nil)
+    #elseif os(macOS)
+    let image = bundle.image(forResource: NSImage.Name(name))
+    #elseif os(watchOS)
+    let image = Image(named: name)
+    #endif
+    guard let result = image else {
+      fatalError("Unable to load image asset named \(name).")
+    }
+    return result
+  }
+}
+
+public extension HyeBoZaIOSImages.Image {
+  @available(macOS, deprecated,
+    message: "This initializer is unsafe on macOS, please use the HyeBoZaIOSImages.image property")
+  convenience init?(asset: HyeBoZaIOSImages) {
+    #if os(iOS) || os(tvOS)
+    let bundle = HyeBoZaIOSResources.bundle
+    self.init(named: asset.name, in: bundle, compatibleWith: nil)
+    #elseif os(macOS)
+    self.init(named: NSImage.Name(asset.name))
     #elseif os(watchOS)
     self.init(named: asset.name)
     #endif
