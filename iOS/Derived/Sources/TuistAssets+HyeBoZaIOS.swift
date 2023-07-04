@@ -10,9 +10,6 @@
 #elseif os(tvOS) || os(watchOS)
   import UIKit
 #endif
-#if canImport(SwiftUI)
-  import SwiftUI
-#endif
 
 // swiftlint:disable superfluous_disable_command file_length implicit_return
 
@@ -21,6 +18,9 @@
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum HyeBoZaIOSAsset {
   public static let accentColor = HyeBoZaIOSColors(name: "AccentColor")
+  public static let main = HyeBoZaIOSColors(name: "Main")
+  public static let main2 = HyeBoZaIOSColors(name: "Main2")
+  public static let sub = HyeBoZaIOSColors(name: "Sub")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
@@ -43,23 +43,6 @@ public final class HyeBoZaIOSColors {
     return color
   }()
 
-  #if canImport(SwiftUI)
-  private var _swiftUIColor: Any? = nil
-  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-  public private(set) var swiftUIColor: SwiftUI.Color {
-    get {
-      if self._swiftUIColor == nil {
-        self._swiftUIColor = SwiftUI.Color(asset: self)
-      }
-
-      return self._swiftUIColor as! SwiftUI.Color
-    }
-    set {
-      self._swiftUIColor = newValue
-    }
-  }
-  #endif
-
   fileprivate init(name: String) {
     self.name = name
   }
@@ -78,16 +61,6 @@ public extension HyeBoZaIOSColors.Color {
     #endif
   }
 }
-
-#if canImport(SwiftUI)
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-public extension SwiftUI.Color {
-  init(asset: HyeBoZaIOSColors) {
-    let bundle = HyeBoZaIOSResources.bundle
-    self.init(asset.name, bundle: bundle)
-  }
-}
-#endif
 
 // swiftlint:enable all
 // swiftformat:enable all
