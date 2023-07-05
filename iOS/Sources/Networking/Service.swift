@@ -19,7 +19,7 @@ final class Service {
             }
     }
 
-    //Detail
+    // Detail
     func getDetail(_ id: Int) -> Single<(Benefits?, NetworkingResult)> {
         return provider.rx.request(.getDetail(id))
             .map(Benefits.self)

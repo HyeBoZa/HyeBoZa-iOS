@@ -22,9 +22,10 @@ class DetailVM: BaseVM {
             .flatMap { id in
                 api.getDetail(id)
             }
-            .subscribe(onNext: { _, res in
+            .subscribe(onNext: { data, res in
                 switch res {
                 case .getOk:
+                    benefits.accept(data!)
                     result.accept(true)
                 default:
                     result.accept(false)

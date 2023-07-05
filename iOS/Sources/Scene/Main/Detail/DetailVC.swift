@@ -15,7 +15,9 @@ class DetailVC: BaseVC {
     private let getDetail = BehaviorRelay<Void>(value: ())
     var benefitID = BehaviorRelay<Int>(value: 0)
 
-    private let backView = UIView().then {
+    private let scrollView = UIScrollView().then {
+        $0.backgroundColor = .clear
+        $0.showsVerticalScrollIndicator = false
         $0.backgroundColor = .black.withAlphaComponent(0.2)
     }
     private let contentView = UIView().then {
@@ -33,6 +35,8 @@ class DetailVC: BaseVC {
     private let benefitTitle = UILabel().then {
         $0.textColor = UIColor(named: "Title")
         $0.font = .systemFont(ofSize: 30, weight: .bold)
+        $0.textAlignment = .center
+        $0.numberOfLines = 0
     }
     private let categoryImage = UIImageView().then {
         $0.backgroundColor = .clear
@@ -44,7 +48,7 @@ class DetailVC: BaseVC {
     }
     private let conditionLabel = UILabel().then {
         $0.textColor = UIColor(named: "Condition")
-        $0.font = .systemFont(ofSize: 14, weight: .light)
+        $0.font = .systemFont(ofSize: 16, weight: .light)
         $0.numberOfLines = 0
     }
     private let contentDetail = UILabel().then {
@@ -54,16 +58,15 @@ class DetailVC: BaseVC {
     }
     private let contentLabel = UILabel().then {
         $0.textColor = UIColor(named: "Condition")
-        $0.font = .systemFont(ofSize: 18, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.numberOfLines = 0
     }
 
     override func bind() {
-        let input = DetailVM.Input(getDetail: getDetail.asDriver(), benefitID: benefitID.asDriver())
+        let input = DetailVM.Input(getDetail: getDetail.asDriver(), benefitID: benefitID.asDriver(onErrorJustReturn: 0))
         let output = self.viewModel.transform(input)
         output.benefits.asObservable()
             .subscribe(onNext: {
-                print("no", $0)
                 self.benefitTitle.text = $0.title
                 switch $0.benefitCategory {
                 case "카드":
@@ -88,8 +91,8 @@ class DetailVC: BaseVC {
     }
     override func addView() {
         view.layer.contents = UIImage(imageLiteralResourceName: "Template").cgImage
-        view.addSubview(backView)
-        backView.addSubview(contentView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
         [
             backButton,
             benefitTitle,
@@ -103,42 +106,46 @@ class DetailVC: BaseVC {
         }
     }
     override func setLayout() {
-        backView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         contentView.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(30)
-            $0.top.bottom.equalToSuperview().inset(113)
+            $0.left.right.equalTo(scrollView.frameLayoutGuide).inset(30)
+            if conditionLabel.countCurrentLines() + contentLabel.countCurrentLines() > 190 {
+                $0.height.equalTo((conditionLabel.countCurrentLines() + contentLabel.countCurrentLines())*19)
+            } else {
+                $0.top.bottom.equalToSuperview().inset(113)
+            }
         }
         backButton.snp.makeConstraints {
             $0.top.left.equalToSuperview().inset(18)
-            $0.width.height.equalTo(34)
+            $0.width.height.equalTo(30)
         }
         benefitTitle.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(90)
+            $0.top.equalToSuperview().inset(55)
+            $0.left.right.equalToSuperview().inset(55)
         }
         categoryImage.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.width.height.equalTo(215)
-            $0.top.equalTo(benefitTitle.snp.bottom).offset(28)
+            $0.width.height.equalTo(210)
+            $0.top.equalTo(benefitTitle.snp.bottom).offset(22)
         }
         conditionDetail.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(categoryImage.snp.bottom).offset(56)
+            $0.top.equalTo(categoryImage.snp.bottom).offset(30)
         }
         conditionLabel.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(40)
-            $0.top.equalTo(conditionDetail.snp.bottom).offset(7)
+            $0.top.equalTo(conditionDetail.snp.bottom).offset(3)
         }
         contentDetail.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(conditionLabel.snp.bottom).offset(36)
+            $0.top.equalTo(conditionLabel.snp.bottom).offset(30)
         }
         contentLabel.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(33)
-            $0.top.equalTo(contentDetail.snp.bottom).offset(4)
-            $0.bottom.equalToSuperview().inset(90)
+            $0.left.right.equalToSuperview().inset(40)
+            $0.top.equalTo(contentDetail.snp.bottom).offset(3)
+            $0.bottom.equalToSuperview().inset(75)
         }
     }
 }

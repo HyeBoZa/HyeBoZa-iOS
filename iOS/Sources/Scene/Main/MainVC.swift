@@ -6,9 +6,9 @@ import RxCocoa
 
 class MainVC: BaseVC {
     private let viewModel = MainVM()
-    private lazy var user = BehaviorRelay<String>(value: "")
-    private lazy var category = BehaviorRelay<String>(value: "")
-    private lazy var benefitID = BehaviorRelay<Int>(value: 0)
+    private let user = BehaviorRelay<String>(value: "")
+    private let category = BehaviorRelay<String>(value: "")
+    private let nextID = BehaviorRelay<Int>(value: 0)
 
     private let logoImage = UIImageView().then {
         $0.image = UIImage(named: "LOGO_SMALL")
@@ -94,14 +94,15 @@ class MainVC: BaseVC {
     override func bind() {
         let input = MainVM.Input(
             getUser: user.asDriver(onErrorJustReturn: "CHILD"),
-            getCategory: category.asDriver(onErrorJustReturn: "CARD")
+            getCategory: category.asDriver(onErrorJustReturn: "CARD"),
+            selectedIndex: benefitTableView.rx.itemSelected.asSignal()
         )
         let output = self.viewModel.transform(input)
 
         output.benefits.bind(to: benefitTableView.rx.items(
             cellIdentifier: "MainCell", cellType: MainCell.self)
         ) { _, items, cell in
-            self.benefitID.accept(items.id)
+            cell.selectionStyle = .none
             switch items.benefitCategory {
             case "카드":
                 cell.categoryImage.image = UIImage(named: "CARD")
@@ -114,15 +115,18 @@ class MainVC: BaseVC {
             default:
                 print("이미지 선택 불가")
             }
-            cell.cellID = items.id
             cell.title.text = items.title
             cell.condition.text = items.control
             cell.content.text = items.content
         }.disposed(by: disposeBag)
+        output.nextID.asObservable()
+            .subscribe(onNext: {
+                self.nextID.accept($0)
+            }).disposed(by: disposeBag)
         benefitTableView.rx.itemSelected
             .subscribe(onNext: { _ in
                 let next = DetailVC()
-                next.benefitID.accept(self.benefitID.value)
+                next.benefitID.accept(self.nextID.value)
                 next.modalPresentationStyle = .fullScreen
                 self.present(next, animated: false)
             }).disposed(by: disposeBag)
@@ -148,7 +152,7 @@ class MainVC: BaseVC {
     }
     override func setLayout() {
         logoImage.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(55)
+            $0.top.equalToSuperview().inset(70)
             $0.left.equalToSuperview().inset(30)
             $0.width.height.equalTo(50)
         }

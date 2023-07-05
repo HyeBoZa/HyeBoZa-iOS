@@ -9,8 +9,6 @@
 import UIKit
 
 class MainCell: BaseTC {
-    var cellID = 0
-
     let categoryImage = UIImageView().then {
         $0.backgroundColor = .clear
         $0.image = UIImage(named: "BENEFIT")
