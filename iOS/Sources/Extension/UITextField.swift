@@ -23,7 +23,6 @@ extension UITextField {
         forTextField.backgroundColor = .white
         forTextField.layer.borderWidth = 2
         forTextField.layer.borderColor = UIColor(named: "Main")?.cgColor
-        forTextField.layer.cornerRadius = 25
         forTextField.textColor = UIColor(named: "Main2")
         forTextField.font = .systemFont(ofSize: 15, weight: .regular)
     }

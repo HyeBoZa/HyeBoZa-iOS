@@ -15,6 +15,7 @@ class MainVC: BaseVC {
     }
     private let searchBar = UITextField().then {
         $0.setTextField(forTextField: $0, placeholderText: "원하시는 혜택을 검색해주세요.")
+        $0.layer.cornerRadius = 25
         $0.addPaddingToTextField(20, 60)
         $0.layer.shadow(color: UIColor(named: "Shadow")!, alpha: 0.15, x: 0, y: 1, blur: 10, spread: 0)
     }
@@ -38,7 +39,6 @@ class MainVC: BaseVC {
     private let categoryMenuButton = UIButton().then {
         $0.setUpMenuButton($0, "카테고리  ")
     }
-
     private var userMenuItems: [UIAction] {
         return [
             UIAction(title: "어린이", handler: { (_) in
@@ -88,6 +88,18 @@ class MainVC: BaseVC {
     }
     private var categoryMenu: UIMenu {
         return UIMenu(title: "", image: nil, identifier: nil, options: [], children: categoryMenuItems)
+    }
+    private let communityButton = UIButton().then {
+        $0.setTitle("커뮤니티  ", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
+        $0.setImage(UIImage(systemName: "bubble.left.and.bubble.right"), for: .normal)
+        $0.semanticContentAttribute = .forceRightToLeft
+        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.tintColor = .white
+        $0.backgroundColor = UIColor(named: "Main2")
+        $0.layer.borderColor = UIColor(named: "Main2")?.cgColor
+        $0.layer.borderWidth = 1.5
+        $0.layer.cornerRadius = 10
     }
 
     // swiftlint : disable function_body_length
@@ -157,6 +169,7 @@ class MainVC: BaseVC {
             searchBar,
             userMenuButton,
             categoryMenuButton,
+            communityButton,
             benefitTableView
         ] .forEach {
             view.addSubview($0)
@@ -172,6 +185,12 @@ class MainVC: BaseVC {
         magnifyButton.rx.tap
             .subscribe(onNext: {
                 self.buttonDidTap()
+            }).disposed(by: disposeBag)
+        communityButton.rx.tap
+            .subscribe(onNext: {
+                let community = PostListVC()
+                community.modalPresentationStyle = .fullScreen
+                self.present(community, animated: false)
             }).disposed(by: disposeBag)
     }
     override func setLayout() {
@@ -198,6 +217,12 @@ class MainVC: BaseVC {
         categoryMenuButton.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(18)
             $0.left.equalTo(userMenuButton.snp.right).offset(14)
+            $0.height.equalTo(35)
+            $0.width.equalTo(106)
+        }
+        communityButton.snp.makeConstraints {
+            $0.top.equalTo(searchBar.snp.bottom).offset(18)
+            $0.right.equalToSuperview().inset(30)
             $0.height.equalTo(35)
             $0.width.equalTo(106)
         }
