@@ -6,6 +6,9 @@ enum API {
     // Main
     case getBenefits(_ user: String, _ category: String)
     case searchBenenfit(_ user: String, _ category: String, _ title: String)
+    case searchBenenfitWithTitle(_ title: String)
+    case searchBenenfitWithUserAndTitle(_ user: String, _ title: String)
+    case searchBenenfitWithCategoryAndTitle(_ category: String, _ title: String)
 
     // Detail
     case getDetail(_ id: Int)
@@ -18,7 +21,8 @@ extension API: TargetType {
 
     var path: String {
         switch self {
-        case .getBenefits, .searchBenenfit:
+        case .getBenefits, .searchBenenfit, .searchBenenfitWithTitle,
+                .searchBenenfitWithUserAndTitle, .searchBenenfitWithCategoryAndTitle:
             return "/benefit"
         case .getDetail(let id):
             return "/benefit/\(id)"
@@ -26,7 +30,8 @@ extension API: TargetType {
     }
     var method: Moya.Method {
         switch self {
-        case .getBenefits, .searchBenenfit, .getDetail:
+        case .getBenefits, .searchBenenfit, .searchBenenfitWithTitle,
+                .searchBenenfitWithUserAndTitle, .searchBenenfitWithCategoryAndTitle, .getDetail:
             return .get
         }
     }
@@ -44,6 +49,29 @@ extension API: TargetType {
             return .requestParameters(
                 parameters: [
                     "user": user,
+                    "benefit": category,
+                    "title": title
+                ],
+                encoding: URLEncoding.default
+            )
+        case .searchBenenfitWithTitle(let title):
+            return .requestParameters(
+                parameters: [
+                    "title": title
+                ],
+                encoding: URLEncoding.default
+            )
+        case .searchBenenfitWithUserAndTitle(let user, let title):
+            return .requestParameters(
+                parameters: [
+                    "user": user,
+                    "title": title
+                ],
+                encoding: URLEncoding.default
+            )
+        case .searchBenenfitWithCategoryAndTitle(let category, let title):
+            return .requestParameters(
+                parameters: [
                     "benefit": category,
                     "title": title
                 ],

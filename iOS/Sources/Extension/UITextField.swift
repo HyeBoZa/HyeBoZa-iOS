@@ -5,9 +5,9 @@ import RxCocoa
 import RxSwift
 
 extension UITextField {
-    func addPaddingToTextField(size: CGFloat) {
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: size, height: self.frame.height))
-        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: size, height: self.frame.height))
+    func addPaddingToTextField(_ left: CGFloat, _ right: CGFloat) {
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: left, height: self.frame.height))
+        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: right, height: self.frame.height))
         self.leftView = leftPaddingView
         self.rightView = rightPaddingView
         self.leftViewMode = ViewMode.always

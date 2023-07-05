@@ -15,7 +15,7 @@ class MainVC: BaseVC {
     }
     private let searchBar = UITextField().then {
         $0.setTextField(forTextField: $0, placeholderText: "원하시는 혜택을 검색해주세요.")
-        $0.addPaddingToTextField(size: 20)
+        $0.addPaddingToTextField(20, 60)
         $0.layer.shadow(color: UIColor(named: "Shadow")!, alpha: 0.15, x: 0, y: 1, blur: 10, spread: 0)
     }
     private let magnifyButton = UIButton().then {
@@ -27,7 +27,6 @@ class MainVC: BaseVC {
     private let benefitTableView = UITableView().then {
         $0.register(MainCell.self, forCellReuseIdentifier: "MainCell")
         $0.separatorInset.left = 0
-//        $0.allowsSelection = false
         $0.backgroundColor = .white
         $0.layer.borderColor = UIColor(named: "Sub")?.cgColor
         $0.layer.borderWidth = 1
@@ -91,6 +90,7 @@ class MainVC: BaseVC {
         return UIMenu(title: "", image: nil, identifier: nil, options: [], children: categoryMenuItems)
     }
 
+    // swiftlint : disable function_body_length
     override func bind() {
         let input = MainVM.Input(
             getUser: user.asDriver(onErrorJustReturn: "CHILD"),
@@ -131,6 +131,25 @@ class MainVC: BaseVC {
                 self.present(next, animated: false)
             }).disposed(by: disposeBag)
     }
+    private func buttonDidTap() {
+        benefitTableView.delegate = nil
+        benefitTableView.dataSource = nil
+        let searchVM = SearchVM()
+        let searchInput = SearchVM.Input(
+            getUser: user.asDriver(onErrorJustReturn: "CHILD"),
+            getCategory: category.asDriver(onErrorJustReturn: "CARD"),
+            textInput: searchBar.rx.text.orEmpty.asDriver(onErrorJustReturn: "")
+        )
+        let searchOutput = searchVM.transform(searchInput)
+
+        searchOutput.benefit.bind(to: self.benefitTableView.rx.items(
+            cellIdentifier: "MainCell", cellType: MainCell.self
+        )) { _, items, cell in
+            cell.title.text = items.title
+            cell.condition.text = items.control
+            cell.content.text = items.content
+        }.disposed(by: self.disposeBag)
+    }
     override func addView() {
         searchBar.addSubview(magnifyButton)
         [
@@ -149,6 +168,11 @@ class MainVC: BaseVC {
         userMenuButton.showsMenuAsPrimaryAction = true
         categoryMenuButton.menu = categoryMenu
         categoryMenuButton.showsMenuAsPrimaryAction = true
+
+        magnifyButton.rx.tap
+            .subscribe(onNext: {
+                self.buttonDidTap()
+            }).disposed(by: disposeBag)
     }
     override func setLayout() {
         logoImage.snp.makeConstraints {
