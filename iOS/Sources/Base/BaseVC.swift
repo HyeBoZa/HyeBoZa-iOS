@@ -8,8 +8,10 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 class BaseVC: UIViewController {
+    typealias HyeBoZaAsset = HyeBoZaIOSAsset
     let bound = UIScreen.main.bounds
     var disposeBag: DisposeBag = .init()
 

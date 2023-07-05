@@ -3,11 +3,13 @@ import SnapKit
 import Then
 
 class BaseTC: UITableViewCell {
+    typealias HyeBoZaAsset = HyeBoZaIOSAsset
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.configureVC()
         self.addView()
         self.setLayout()
-        self.configureVC()
         self.backgroundColor = .white
     }
 
@@ -16,8 +18,7 @@ class BaseTC: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func configureVC() {}
     func addView() {}
     func setLayout() {}
-    func configureVC() {}
-
 }
