@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  HyeBoZa-iOS
-//
-//  Created by 강인혜 on 2023/07/04.
-//  Copyright © 2023 com.HyeBoZa. All rights reserved.
-//
-
 import UIKit
 
 @main
@@ -28,7 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
     }
 
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {

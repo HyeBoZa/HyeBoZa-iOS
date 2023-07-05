@@ -22,6 +22,7 @@ public enum HyeBoZaIOSAsset {
   public static let main = HyeBoZaIOSColors(name: "Main")
   public static let main2 = HyeBoZaIOSColors(name: "Main2")
   public static let panda = HyeBoZaIOSImages(name: "PANDA")
+  public static let shadow = HyeBoZaIOSColors(name: "Shadow")
   public static let sub = HyeBoZaIOSColors(name: "Sub")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

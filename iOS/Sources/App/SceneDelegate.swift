@@ -1,11 +1,3 @@
-//
-//  SceneDelegate.swift
-//  HyeBoZa-iOS
-//
-//  Created by 강인혜 on 2023/07/04.
-//  Copyright © 2023 com.HyeBoZa. All rights reserved.
-//
-
 import UIKit
 import RxSwift
 
@@ -22,9 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
 
-        let mainViewController = MainVC()
-        let naviMainViewController = BaseNC(rootViewController: mainViewController)
-        window?.rootViewController = naviMainViewController
+        window?.rootViewController = BaseNC(rootViewController: MainVC())
         window?.makeKeyAndVisible()
 
     }
