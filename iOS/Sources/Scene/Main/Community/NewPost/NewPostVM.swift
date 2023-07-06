@@ -23,9 +23,8 @@ class NewPostVM: BaseVM {
                 api.postNewBoard(title, content)
             }
             .subscribe(onNext: { res in
-                print(res)
                 switch res {
-                case .getOk:
+                case .createOk:
                     result.accept(true)
                 default:
                     result.accept(false)

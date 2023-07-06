@@ -28,6 +28,7 @@ class NewPostVC: BaseVC {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.showsVerticalScrollIndicator = false
         $0.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        $0.autocorrectionType = .no
     }
     private let userMenuButton = UIButton().then {
         $0.setUpMenuButton($0, "대상자  ")
@@ -99,7 +100,7 @@ class NewPostVC: BaseVC {
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitleColor(UIColor.white, for: .normal)
         $0.backgroundColor = UIColor(named: "Main")
-        $0.layer.borderColor = UIColor.white.cgColor
+        $0.layer.borderColor = UIColor(named: "Sub")?.cgColor
         $0.layer.borderWidth = 1.5
         $0.layer.cornerRadius = 10
     }
@@ -143,6 +144,7 @@ class NewPostVC: BaseVC {
             .subscribe(onNext: {
                 self.dismiss(animated: true)
             }).disposed(by: disposeBag)
+        self.hideKeyboardWhenTappedAround()
     }
     override func setLayout() {
         logoImage.snp.makeConstraints {

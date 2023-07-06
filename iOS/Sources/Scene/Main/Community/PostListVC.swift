@@ -38,6 +38,7 @@ class PostListVC: BaseVC {
         $0.layer.borderColor = UIColor(named: "Sub")?.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 6
+        $0.showsVerticalScrollIndicator = false
     }
     private let backButton = UIButton().then {
         $0.setTitle("홈으로 돌아가기  ", for: .normal)

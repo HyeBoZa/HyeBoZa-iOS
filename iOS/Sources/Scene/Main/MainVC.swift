@@ -6,8 +6,8 @@ import RxCocoa
 
 class MainVC: BaseVC {
     private let viewModel = MainVM()
-    private let user = BehaviorRelay<String>(value: "")
-    private let category = BehaviorRelay<String>(value: "")
+    private var user = BehaviorRelay<String>(value: "")
+    private var category = BehaviorRelay<String>(value: "")
     private let nextID = BehaviorRelay<Int>(value: 0)
 
     private let logoImage = UIImageView().then {
@@ -32,6 +32,7 @@ class MainVC: BaseVC {
         $0.layer.borderColor = UIColor(named: "Sub")?.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 6
+        $0.showsVerticalScrollIndicator = false
     }
     private let userMenuButton = UIButton().then {
         $0.setUpMenuButton($0, "대상자  ")
@@ -101,7 +102,6 @@ class MainVC: BaseVC {
         $0.layer.borderWidth = 1.5
         $0.layer.cornerRadius = 10
     }
-
     // swiftlint : disable function_body_length
     override func bind() {
         let input = MainVM.Input(
@@ -159,6 +159,8 @@ class MainVC: BaseVC {
     }
     override func configureVC() {
         view.layer.contents = UIImage(imageLiteralResourceName: "Template").cgImage
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.hideKeyboardWhenTappedAround()
         userMenuButton.menu = userMenu
         userMenuButton.showsMenuAsPrimaryAction = true
         categoryMenuButton.menu = categoryMenu
