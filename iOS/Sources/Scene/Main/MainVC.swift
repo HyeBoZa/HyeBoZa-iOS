@@ -107,7 +107,8 @@ class MainVC: BaseVC {
         let input = MainVM.Input(
             getUser: user.asDriver(onErrorJustReturn: "CHILD"),
             getCategory: category.asDriver(onErrorJustReturn: "CARD"),
-            selectedIndex: benefitTableView.rx.itemSelected.asSignal()
+            selectedIndex: benefitTableView.rx.itemSelected.asSignal(),
+            searchText: searchBar.rx.text.orEmpty.asDriver()
         )
         let output = self.viewModel.transform(input)
 
@@ -143,25 +144,6 @@ class MainVC: BaseVC {
                 self.present(next, animated: false)
             }).disposed(by: disposeBag)
     }
-    private func buttonDidTap() {
-        benefitTableView.delegate = nil
-        benefitTableView.dataSource = nil
-        let searchVM = SearchVM()
-        let searchInput = SearchVM.Input(
-            getUser: user.asDriver(onErrorJustReturn: "CHILD"),
-            getCategory: category.asDriver(onErrorJustReturn: "CARD"),
-            textInput: searchBar.rx.text.orEmpty.asDriver(onErrorJustReturn: "")
-        )
-        let searchOutput = searchVM.transform(searchInput)
-
-        searchOutput.benefit.bind(to: self.benefitTableView.rx.items(
-            cellIdentifier: "MainCell", cellType: MainCell.self
-        )) { _, items, cell in
-            cell.title.text = items.title
-            cell.condition.text = items.control
-            cell.content.text = items.content
-        }.disposed(by: self.disposeBag)
-    }
     override func addView() {
         searchBar.addSubview(magnifyButton)
         [
@@ -182,10 +164,6 @@ class MainVC: BaseVC {
         categoryMenuButton.menu = categoryMenu
         categoryMenuButton.showsMenuAsPrimaryAction = true
 
-        magnifyButton.rx.tap
-            .subscribe(onNext: {
-                self.buttonDidTap()
-            }).disposed(by: disposeBag)
         communityButton.rx.tap
             .subscribe(onNext: {
                 let community = PostListVC()

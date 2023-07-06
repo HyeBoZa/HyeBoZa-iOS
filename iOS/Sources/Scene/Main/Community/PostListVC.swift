@@ -56,7 +56,8 @@ class PostListVC: BaseVC {
     override func bind() {
         let input = PostListVM.Input(
             getBoards: getBoards.asDriver(onErrorJustReturn: ()),
-            selectedIndex: postsTableView.rx.itemSelected.asSignal()
+            selectedIndex: postsTableView.rx.itemSelected.asSignal(),
+            titleInput: searchBar.rx.text.orEmpty.asDriver()
         )
         let output = self.viewModel.transform(input)
 
@@ -78,21 +79,6 @@ class PostListVC: BaseVC {
                 self.present(next, animated: false)
             }).disposed(by: disposeBag)
     }
-    private func buttonDidTap() {
-        postsTableView.delegate = nil
-        postsTableView.dataSource = nil
-        let searchVM = PostSearchVM()
-        let searchInput = PostSearchVM.Input(
-            textInput: searchBar.rx.text.orEmpty.asDriver(onErrorJustReturn: "")
-        )
-        let searchOutput = searchVM.transform(searchInput)
-
-        searchOutput.posts.bind(to: self.postsTableView.rx.items(
-            cellIdentifier: "PostCell", cellType: PostCell.self
-        )) { _, items, cell in
-            cell.title.text = items.title
-        }.disposed(by: self.disposeBag)
-    }
     override func addView() {
         searchBar.addSubview(magnifyButton)
         [
@@ -106,10 +92,6 @@ class PostListVC: BaseVC {
         }
     }
     override func configureVC() {
-        magnifyButton.rx.tap
-            .subscribe(onNext: {
-                self.buttonDidTap()
-            }).disposed(by: disposeBag)
         newPostButton.rx.tap
             .subscribe(onNext: {
                 let next = NewPostVC()
@@ -128,9 +110,9 @@ class PostListVC: BaseVC {
             $0.width.height.equalTo(50)
         }
         newPostButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(80)
+            $0.top.equalToSuperview().inset(72)
             $0.right.equalToSuperview().inset(30)
-            $0.width.height.equalTo(35)
+            $0.width.height.equalTo(34)
         }
         searchBar.snp.makeConstraints {
             $0.top.equalTo(logoImage.snp.bottom)

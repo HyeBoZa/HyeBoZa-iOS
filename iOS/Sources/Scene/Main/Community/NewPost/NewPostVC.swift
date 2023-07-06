@@ -15,15 +15,19 @@ class NewPostVC: BaseVC {
     private let titleTextField = UITextField().then {
         $0.setTextField(forTextField: $0, placeholderText: "제목을 입력해주세요.")
         $0.layer.cornerRadius = 10
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.addPaddingToTextField(20, 20)
         $0.layer.shadow(color: UIColor(named: "Shadow")!, alpha: 0.15, x: 0, y: 1, blur: 10, spread: 0)
     }
-    private let contentTextView = UITextView().then {
+    let contentTextView = UITextView().then {
         $0.backgroundColor = .white
         $0.layer.borderColor = UIColor(named: "Sub")?.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 6
         $0.textColor = UIColor(named: "Content")
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.showsVerticalScrollIndicator = false
+        $0.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
     }
     private let userMenuButton = UIButton().then {
         $0.setUpMenuButton($0, "대상자  ")
@@ -81,13 +85,21 @@ class NewPostVC: BaseVC {
     private var categoryMenu: UIMenu {
         return UIMenu(title: "", image: nil, identifier: nil, options: [], children: categoryMenuItems)
     }
+    private let cancelButton = UIButton().then {
+        $0.setTitle("돌아가기", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.setTitleColor(UIColor(named: "Main2"), for: .normal)
+        $0.backgroundColor = .white
+        $0.layer.borderColor = UIColor(named: "Main2")?.cgColor
+        $0.layer.borderWidth = 1.5
+        $0.layer.cornerRadius = 10
+    }
     private let sendButton = UIButton().then {
         $0.setTitle("게시하기", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitleColor(UIColor.white, for: .normal)
-        $0.tintColor = .white
-        $0.backgroundColor = UIColor(named: "Main2")
-        $0.layer.borderColor = UIColor(named: "Main2")?.cgColor
+        $0.backgroundColor = UIColor(named: "Main")
+        $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.borderWidth = 1.5
         $0.layer.cornerRadius = 10
     }
@@ -102,6 +114,7 @@ class NewPostVC: BaseVC {
         let output = self.viewModel.transform(input)
         output.result.asObservable()
             .subscribe(onNext: { res in
+                print(res, "soome")
                 if res == true {
                     self.dismiss(animated: true)
                 }
@@ -113,6 +126,8 @@ class NewPostVC: BaseVC {
             titleTextField,
             userMenuButton,
             categoryMenuButton,
+            contentTextView,
+            cancelButton,
             sendButton
         ] .forEach {
             view.addSubview($0)
@@ -124,6 +139,10 @@ class NewPostVC: BaseVC {
         userMenuButton.showsMenuAsPrimaryAction = true
         categoryMenuButton.menu = categoryMenu
         categoryMenuButton.showsMenuAsPrimaryAction = true
+        cancelButton.rx.tap
+            .subscribe(onNext: {
+                self.dismiss(animated: true)
+            }).disposed(by: disposeBag)
     }
     override func setLayout() {
         logoImage.snp.makeConstraints {
@@ -153,9 +172,17 @@ class NewPostVC: BaseVC {
             $0.top.equalTo(titleTextField.snp.bottom).offset(65)
             $0.bottom.equalToSuperview().inset(190)
         }
-        sendButton.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(30)
+        cancelButton.snp.makeConstraints {
+            $0.width.equalTo((view.frame.size.width-80)/2)
+            $0.left.equalToSuperview().inset(30)
             $0.top.equalTo(contentTextView.snp.bottom).offset(24)
+            $0.height.equalTo(40)
+        }
+        sendButton.snp.makeConstraints {
+            $0.left.equalTo(cancelButton.snp.right).offset(12)
+            $0.right.equalToSuperview().inset(30)
+            $0.top.equalTo(contentTextView.snp.bottom).offset(24)
+            $0.height.equalTo(40)
         }
     }
 }

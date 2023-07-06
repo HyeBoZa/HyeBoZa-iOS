@@ -43,4 +43,3 @@ class PostDetailVM: BaseVM {
         return Output(post: post, result: result)
     }
 }
-

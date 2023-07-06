@@ -7,6 +7,7 @@ class PostListVM: BaseVM {
     struct Input {
         let getBoards: Driver<Void>
         let selectedIndex: Signal<IndexPath>
+        let titleInput: Driver<String>
     }
     struct Output {
         let posts: BehaviorRelay<[Posts]>
@@ -38,6 +39,19 @@ class PostListVM: BaseVM {
                 let value = posts.value
                 nextID.accept(value[index.row].id)
                 result.accept(true)
+            }).disposed(by: disposeBag)
+
+        input.titleInput.asObservable()
+            .flatMap { title in
+                api.searchPost(title)
+            }
+            .subscribe(onNext: { data, res in
+                switch res {
+                case .getOk:
+                    posts.accept(data?.postList ?? [])
+                default:
+                    result.accept(false)
+                }
             }).disposed(by: disposeBag)
 
         return Output(posts: posts, nextID: nextID, result: result)

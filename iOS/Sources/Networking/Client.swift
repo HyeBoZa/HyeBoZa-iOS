@@ -4,11 +4,7 @@ import Moya
 
 enum API {
     // Main
-    case getBenefits(_ user: String, _ category: String)
     case searchBenenfit(_ user: String, _ category: String, _ title: String)
-    case searchBenenfitWithTitle(_ title: String)
-    case searchBenenfitWithUserAndTitle(_ user: String, _ title: String)
-    case searchBenenfitWithCategoryAndTitle(_ category: String, _ title: String)
 
     // Detail
     case getDetail(_ id: Int)
@@ -29,8 +25,7 @@ extension API: TargetType {
 
     var path: String {
         switch self {
-        case .getBenefits, .searchBenenfit, .searchBenenfitWithTitle,
-                .searchBenenfitWithUserAndTitle, .searchBenenfitWithCategoryAndTitle:
+        case .searchBenenfit:
             return "/benefit"
         case .getDetail(let id):
             return "/benefit/\(id)"
@@ -38,15 +33,13 @@ extension API: TargetType {
             return "/board"
         case .getPostDetail(let id):
             return "/board/\(id)"
-        case .searchPost(let title):
-            return "/board/search?title=\(title)"
+        case .searchPost:
+            return "/board/search"
         }
     }
     var method: Moya.Method {
         switch self {
-        case .getBenefits, .searchBenenfit, .searchBenenfitWithTitle,
-                .searchBenenfitWithUserAndTitle,
-                .searchBenenfitWithCategoryAndTitle, .getDetail, .getBoards, .getPostDetail, .searchPost:
+        case .searchBenenfit, .getDetail, .getBoards, .getPostDetail, .searchPost:
             return .get
         case .postNewBoard:
             return .post
@@ -54,41 +47,10 @@ extension API: TargetType {
     }
     var task: Task {
         switch self {
-        case .getBenefits(let user, let category):
-            return .requestParameters(
-                parameters: [
-                    "user": user,
-                    "benefit": category
-                ],
-                encoding: URLEncoding.default
-            )
         case .searchBenenfit(let user, let category, let title):
             return .requestParameters(
                 parameters: [
                     "user": user,
-                    "benefit": category,
-                    "title": title
-                ],
-                encoding: URLEncoding.default
-            )
-        case .searchBenenfitWithTitle(let title):
-            return .requestParameters(
-                parameters: [
-                    "title": title
-                ],
-                encoding: URLEncoding.default
-            )
-        case .searchBenenfitWithUserAndTitle(let user, let title):
-            return .requestParameters(
-                parameters: [
-                    "user": user,
-                    "title": title
-                ],
-                encoding: URLEncoding.default
-            )
-        case .searchBenenfitWithCategoryAndTitle(let category, let title):
-            return .requestParameters(
-                parameters: [
                     "benefit": category,
                     "title": title
                 ],
@@ -101,6 +63,13 @@ extension API: TargetType {
                     "content": content
                 ],
                 encoding: JSONEncoding.prettyPrinted
+            )
+        case .searchPost(let title):
+            return .requestParameters(
+                parameters: [
+                    "title": title
+                ],
+                encoding: URLEncoding.default
             )
         default:
             return .requestPlain

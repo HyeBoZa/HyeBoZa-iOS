@@ -60,7 +60,7 @@ class PostDetailVC: BaseVC {
 
         backButton.rx.tap
             .subscribe(onNext: {
-                self.dismiss(animated: true)
+                self.dismiss(animated: false)
             }).disposed(by: disposeBag)
     }
     override func addView() {

@@ -17,12 +17,13 @@ class NewPostVM: BaseVM {
         let result = PublishRelay<Bool>()
         let params = Driver.combineLatest(input.title, input.content)
 
-        input.title.asObservable()
+        input.buttonTapped.asObservable()
             .withLatestFrom(params)
             .flatMap { title, content in
                 api.postNewBoard(title, content)
             }
             .subscribe(onNext: { res in
+                print(res)
                 switch res {
                 case .getOk:
                     result.accept(true)
@@ -34,4 +35,3 @@ class NewPostVM: BaseVM {
         return Output(result: result)
     }
 }
-
